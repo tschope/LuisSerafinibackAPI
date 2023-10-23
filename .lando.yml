@@ -1,0 +1,32 @@
+name: backapi
+recipe: laravel
+config:
+  php: '8.1'
+  webroot: api/public
+  via: nginx
+  database: mysql:8.0
+services:
+  appserver:
+    type: php:8.1
+tooling:
+  setup:
+    cmd:
+      - appserver: cd api && composer install --no-cache
+      - appserver: php -r "file_exists('api/.env') || copy('api/.env.example', 'api/.env');"
+      - appserver: cd api && php artisan key:generate
+      - appserver: cd api && php artisan migrate --seed
+  install:
+    cmd:
+      - appserver: cd api && composer install --no-cache
+      - appserver: php -r "file_exists('api/.env') || copy('api/.env.example', 'api/.env');"
+      - appserver: cd api && php artisan key:generate
+      - appserver: cd api && php artisan migrate --seed
+  tinker:
+    service: appserver
+    cmd: cd api && php artisan tinker
+  migrate:
+    service: appserver
+    cmd: cd api && php artisan migrate
+  rollback:
+    service: appserver
+    cmd: cd api && php artisan migrate:rollback --step=1
