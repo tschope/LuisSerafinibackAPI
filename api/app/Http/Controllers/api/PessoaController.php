@@ -10,15 +10,13 @@ use Illuminate\Support\Facades\DB;
 
 class PessoaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+         public readonly Pessoa $pessoa;
 
-     public readonly Pessoa $pessoa;
      public function __construct()
      {
         $this->pessoa = new Pessoa();
      }
+
     public function index()
     {
 
@@ -53,7 +51,7 @@ class PessoaController extends Controller
             'active'=>'string'
         ]);
 /*
-        $data =$request->all();
+        $data = $request->all();
         $pessoa = Pessoa::create($data);
 
         return ["data"=>$pessoa];
@@ -71,7 +69,7 @@ class PessoaController extends Controller
         'active'=>$request->input('active')
         ]);
     try{
-        if ($registrar) {
+        if ($registrar) {  //se usar comentado mudar para $data
             return response()->json(['message' => 'Usuário criado com sucesso']);
         } else {
             return response()->json(['message' => 'Falha ao criar o novo Usuário'], 500);
@@ -94,15 +92,15 @@ class PessoaController extends Controller
      */
     public function show($nome)
     {
-        $mostrar = DB::table('pessoa')->where('nome', 'like', '%'.$nome .'%')->get();
+        $mostrar = DB::table('pessoa')->where('nome', 'like', $nome .'%')->get();
 
         if($mostrar->isEmpty()){
-            return response()->json(['message'=>'Nenhum usuário encontradao'], 404);
+            return response()->json(['message'=>'Nenhum usuário encontrado'], 404);
         }else{
             
 
         }
-        return response()->json($mostrar);
+        return response()->json(['data'=> $mostrar]);
     }
 
     /**
@@ -110,15 +108,23 @@ class PessoaController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $pessoa = $this->pessoa->where('id',$id)->get();
+
+        return response()->json(['data'=>$pessoa]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
+    $dadosAtualizar =  $request->only(['nome', 'telefone','email','cpf_cnpj','rua','cidade','estado','cep','pais','active']);
+    
+    $alteracao = DB::table('pessoa')
+    ->where('id', $id)->update($dadosAtualizar);
+
+    if($alteracao === 0){
+        return response()->json(['message'=>'Registro não encontrado ou nenhum campo alterado !'], 404);
+    }else{
+        return response()->json(['message'=>'Registro alterado com sucesso!']);
+    }
     }
 
     /**

@@ -19,7 +19,8 @@ Route::get('/pessoa', [PessoaController::class, 'index']);                      
 Route::delete('/pessoa/{id}', [PessoaController::class, 'destroy']);            //ok
 Route::post('/pessoa',[PessoaController::class, 'store']);                      //ok
 Route::get('/pessoa/proc/{nome}', [PessoaController::class, 'show']);           //ok
-Route::put('/pessoa/{id}',[PessoaController::class, 'update']);                 //-falta
+Route::put('/pessoa/{id}',[PessoaController::class, 'update']);                 //ok
+//Route::get('/pessoa/edit/{id}',[PessoaController::class, 'edit']);              //-falta
 
 /*
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
