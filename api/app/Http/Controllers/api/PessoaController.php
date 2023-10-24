@@ -75,7 +75,7 @@ class PessoaController extends Controller
             return response()->json(['message' => 'Nenhum usuário encontradao'], 404);
         }
 
-        return response()->json($mostrar);
+        return response()->json(['data'=> $mostrar]);
     }
 
     /**
@@ -83,7 +83,9 @@ class PessoaController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $pessoa = Pessoa::where('id',$id)->get();
+
+        return response()->json(['data'=>$pessoa]);
     }
 
     /**
@@ -91,7 +93,28 @@ class PessoaController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'nome' => 'string',
+            'telefone' => 'string',
+            'email' => 'string',
+            'cpf_cnpj' => 'string',
+            'rua' => 'string',
+            'cidade' => 'string',
+            'estado' => 'string',
+            'cep' => 'string',
+            'pais' => 'string',
+            'active' => 'string'
+        ]);
+
+        $data = $request->all();
+
+        $alteracao = Pessoa::where('id', $id)->update($data);
+
+        if($alteracao === 0){
+            return response()->json(['message'=>'Registro não encontrado ou nenhum campo alterado !'], 404);
+        }else{
+            return response()->json(['message'=>'Registro alterado com sucesso!']);
+        }
     }
 
     /**
